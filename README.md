@@ -1,5 +1,5 @@
 
-# Graphx
+# GraphX
 Graphx ist ein Kommandozeilen Programm zur Berechnung und Darstellung von Teilbereichen der Graphentheorie. Das Tool wurde ausschließlich in Java 17 geschrieben.
 
 ## Vorraussetzungen
