@@ -3,6 +3,8 @@ package calculations;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
+
 public class Calcs {
 	private HashMap<String, Integer> Eccentricity = new HashMap<String, Integer>();
 	private int radius = 9999;
@@ -24,12 +26,12 @@ public class Calcs {
 				}
 			}
 		}
-		// Hauptdiagonale wieder mit 0er füllen 
+		// Hauptdiagonale wieder mit 0er füllen
 		for (int i = 0; i < size; i++) {
 			DMatrix[i][i] = 0;
 		}
 
-		while (hasNull == true) {
+		while (counter <= m.getSize()) {
 			// A^x erstellen
 			AMatrix = matrixMultiplication(AMatrix, AMatrixInitial, size);
 			counter++;
@@ -52,21 +54,30 @@ public class Calcs {
 	// Exzentrizität berechnen
 	public void calcEccentricity(Matrix m) {
 		Integer[][] Matrix = m.getMatrix();
-		int run = 0;
-		for (int j = 0; j < Matrix.length; j++) {
-			int counter = 0;
-			for (int i = 0; i < Matrix.length; i++) {
-				if (Matrix[j][i] > counter) {
-					counter = Matrix[j][i];
 
+		if (checkNull(Matrix.length, Matrix)) {
+			System.out.println("Graph nicht zusammenhängend");
+		} else {
+			int run = 0;
+			for (int j = 0; j < Matrix.length; j++) {
+				int counter = 0;
+				for (int i = 0; i < Matrix.length; i++) {
+					if (Matrix[j][i] > counter) {
+						counter = Matrix[j][i];
+
+					}
 				}
+				String letter = toAlphabetic(run);
+				Eccentricity.put(letter, counter);
+				run++;
 			}
-			String letter = toAlphabetic(run);
-			Eccentricity.put(letter, counter);
-			run++;
+
+			System.out.println(Eccentricity);
+			calcDiameter();
+			calcRadius();
+			calcCenter();
 		}
 
-		System.out.println(Eccentricity);
 	}
 
 	public void calcDiameter() {
@@ -102,7 +113,7 @@ public class Calcs {
 		for (Entry<String, Integer> entry2 : temp.entrySet()) {
 			String key = entry2.getKey();
 			Integer value = entry2.getValue();
-			System.out.print(key+" ");
+			System.out.print(key + " ");
 		}
 		System.out.println("}");
 
@@ -175,6 +186,75 @@ public class Calcs {
 		} else {
 			return toAlphabetic(quot - 1) + letter;
 		}
+	}
+
+	public boolean compareMatrix(Integer[][] m1, Integer[][] m2, int size) {
+		boolean isEqual = true;
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (m1[i][j] != m2[i][j]) {
+					isEqual = false;
+				}
+			}
+		}
+		return isEqual;
+	}
+
+	public boolean hasMatrixNewValues(Integer[][] tempMatrix, Integer[][] PMatrix, int size) {
+		boolean hasNewValues = false;
+
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (tempMatrix[i][j] == 0 && PMatrix[i][j] != 0) {
+					hasNewValues = true;
+				}
+			}
+		}
+		return hasNewValues;
+
+	}
+
+	public Integer[][] calcWegematrix(Matrix m) {
+		int size = m.getSize();
+
+		Integer[][] WMatrix = m.getMatrix();
+		Integer[][] initialMatrix = copyMatrix(WMatrix, size);
+		Integer[][] PMatrix = copyMatrix(WMatrix, size);
+		Integer[][] tempMatrix = copyMatrix(WMatrix, size);
+
+		// Diagonale füllen
+
+		for (int i = 0; i < size; i++) {
+			WMatrix[i][i] = 1;
+		}
+
+		// PMatrix potenzieren
+		PMatrix = matrixMultiplication(initialMatrix, PMatrix, size);
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (WMatrix[i][j] != 1 && PMatrix[i][j] != 0) {
+					WMatrix[i][j] = 1;
+				}
+			}
+		}
+
+		while (!hasMatrixNewValues(tempMatrix, PMatrix, size)) {
+			tempMatrix = copyMatrix(PMatrix, size);
+			// PMatrix potenzieren
+			PMatrix = matrixMultiplication(initialMatrix, PMatrix, size);
+			for (int i = 0; i < size; i++) {
+				for (int j = 0; j < size; j++) {
+					if (WMatrix[i][j] != 1 && PMatrix[i][j] != 0) {
+						WMatrix[i][j] = 1;
+					}
+				}
+			}
+
+		}
+
+		outputMatrix(WMatrix, size);
+		return WMatrix;
+
 	}
 
 }
