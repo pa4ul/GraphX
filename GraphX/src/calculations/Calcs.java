@@ -1,6 +1,8 @@
 package calculations;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import javax.swing.plaf.synth.SynthOptionPaneUI;
@@ -43,9 +45,9 @@ public class Calcs {
 					}
 				}
 			}
-
 			hasNull = checkNull(size, DMatrix);
 		}
+
 		System.out.println("Distanzmatrix");
 		outputMatrix(DMatrix, size);
 		return DMatrix;
@@ -216,7 +218,7 @@ public class Calcs {
 
 	public Integer[][] calcWegematrix(Matrix m) {
 		int size = m.getSize();
-
+		int counter = 0; // nicht Laufzeitoptimiert!!
 		Integer[][] WMatrix = m.getMatrix();
 		Integer[][] initialMatrix = copyMatrix(WMatrix, size);
 		Integer[][] PMatrix = copyMatrix(WMatrix, size);
@@ -237,8 +239,10 @@ public class Calcs {
 				}
 			}
 		}
-
-		while (!hasMatrixNewValues(tempMatrix, PMatrix, size)) {
+		// !hasMatrixNewValues(tempMatrix, PMatrix, size) -> while schleife nicht
+		// laufzeitoptimiert
+		while (counter < m.getSize()) {
+			counter++;
 			tempMatrix = copyMatrix(PMatrix, size);
 			// PMatrix potenzieren
 			PMatrix = matrixMultiplication(initialMatrix, PMatrix, size);
@@ -255,6 +259,31 @@ public class Calcs {
 		outputMatrix(WMatrix, size);
 		return WMatrix;
 
+	}
+
+	public int calcComponents(Integer[][] w) {
+
+		ArrayList<String> storage = new ArrayList<>();
+		ArrayList<String> components = new ArrayList<>();
+		String sum = "";
+
+		for (int i = 0; i < w.length; i++) {
+
+			for (int j = 0; j < w.length; j++) {
+				sum += w[i][j];
+			}
+			storage.add(sum);
+			sum = "";
+		}
+		System.out.println("________");
+
+		for (String i : storage) {
+			// System.out.println(i);
+			if (!components.contains(i))
+				components.add(i);
+		}
+
+		return components.size();
 	}
 
 }
