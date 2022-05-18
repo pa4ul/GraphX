@@ -18,8 +18,9 @@ public class Matrix {
 	public Matrix() {
 		readMatrix();
 	}
+
 	public Matrix(Integer[][] m) {
-		Matrix=m;
+		Matrix = m;
 	}
 
 	public void readMatrix() {
@@ -83,7 +84,6 @@ public class Matrix {
 	public int getSize() {
 		return matrixSize;
 	}
-
 
 	public Integer[][] getMatrix() {
 		return Matrix;

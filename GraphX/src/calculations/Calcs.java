@@ -261,6 +261,50 @@ public class Calcs {
 
 	}
 
+	public Integer[][] calcWegematrix(Integer[][] m) {
+		int size = m.length;
+		int counter = 0; // nicht Laufzeitoptimiert!!
+		Integer[][] WMatrix = m;
+		Integer[][] initialMatrix = copyMatrix(WMatrix, size);
+		Integer[][] PMatrix = copyMatrix(WMatrix, size);
+		Integer[][] tempMatrix = copyMatrix(WMatrix, size);
+
+		// Diagonale füllen
+
+		for (int i = 0; i < size; i++) {
+			WMatrix[i][i] = 1;
+		}
+
+		// PMatrix potenzieren
+		PMatrix = matrixMultiplication(initialMatrix, PMatrix, size);
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (WMatrix[i][j] != 1 && PMatrix[i][j] != 0) {
+					WMatrix[i][j] = 1;
+				}
+			}
+		}
+		// !hasMatrixNewValues(tempMatrix, PMatrix, size) -> while schleife nicht
+		// laufzeitoptimiert
+		while (counter < m.length) {
+			counter++;
+			tempMatrix = copyMatrix(PMatrix, size);
+			// PMatrix potenzieren
+			PMatrix = matrixMultiplication(initialMatrix, PMatrix, size);
+			for (int i = 0; i < size; i++) {
+				for (int j = 0; j < size; j++) {
+					if (WMatrix[i][j] != 1 && PMatrix[i][j] != 0) {
+						WMatrix[i][j] = 1;
+					}
+				}
+			}
+
+		}
+
+		return WMatrix;
+
+	}
+
 	public int calcComponents(Integer[][] w) {
 
 		ArrayList<String> storage = new ArrayList<>();
@@ -275,7 +319,7 @@ public class Calcs {
 			storage.add(sum);
 			sum = "";
 		}
-		System.out.println("________");
+		
 
 		for (String i : storage) {
 			// System.out.println(i);
@@ -285,5 +329,55 @@ public class Calcs {
 
 		return components.size();
 	}
+
+	public void calcArticulations(Matrix m, int k) {
+		final int components = k;
+		int newComponents = 0;
+		ArrayList<Integer> articulationNodes = new ArrayList<>();
+		Integer[][] aMatrix = m.getMatrix();
+		int size = m.getSize();
+		Integer[][] tempAMatrix = copyMatrix(aMatrix, size);
+		Integer[][] tempWegeMatrix = new Integer[size][size];
+
+		for (int i = 0; i < size; i++) {
+			tempAMatrix = removeNode(tempAMatrix, i);
+			tempWegeMatrix = calcWegematrix(tempAMatrix); // ev prüfen ob Wegematrix korrekt berechnet wird
+			newComponents = calcComponents(tempWegeMatrix);
+			if (newComponents > components + 1) {
+				articulationNodes.add(i);
+
+			}
+			tempAMatrix = copyMatrix(aMatrix, size);
+		}
+		outputArticulations(articulationNodes);
+	}
+
+	public Integer[][] removeNode(Integer[][] m, int n) {
+		Integer[][] matrix = m;
+		for (int i = 0; i < m.length; i++) {
+			matrix[n][i] = 0;
+			matrix[i][n] = 0;
+		}
+		return m;
+	}
+	
+	public void outputArticulations(ArrayList<Integer> a) {
+		if(a.size()>0) {
+			System.out.print("Artikulationen: ");
+			for(Integer i : a) {
+				System.out.print(toAlphabetic(i)+" ");
+			}
+		}
+	}
+
+	// Adjazentmatrix Knoten oder Kante entfernen um Artikulationen oder Brücken zu
+	// berechenen
+	// Ausgabe soll aussehen: Artikulationen: A,C,D,Z
+	// Brücken: [A,C], [H,G]
+	// Knoten entfernen (ganze Spalte und ganze Zeile) mit 0er überschreiben ->
+	// Wegematrix berechnen ob Komponente dazu kommt -> wenn ja dann Knoten
+	// speichern
+	// Jede brücke entfernen -> Wegmatrix neu berechnen -> Wenn Komponente dazu
+	// kommt Brücke Speichern.
 
 }
