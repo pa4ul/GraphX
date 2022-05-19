@@ -3,6 +3,8 @@
 Graphx ist ein Kommandozeilen Programm zur Berechnung und Darstellung von Teilbereichen der Graphentheorie. Das Tool wurde ausschließlich in Java 17 geschrieben.
 
 ## Vorraussetzungen
+Unabhängig von der verwendeten IDE muss die Java Library com.opencsv.CSVReader importiert werden.
+
 Die Berechnungen finden auf Basis einer Adjazenzmatrix im CSV-Format statt für welche folgendes gelten muss.
 
 ![image](https://user-images.githubusercontent.com/50578549/160783519-48cf499a-1625-4894-a211-277163885511.png)
