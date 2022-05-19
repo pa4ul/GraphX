@@ -319,7 +319,6 @@ public class Calcs {
 			storage.add(sum);
 			sum = "";
 		}
-		
 
 		for (String i : storage) {
 			// System.out.println(i);
@@ -360,14 +359,41 @@ public class Calcs {
 		}
 		return m;
 	}
-	
+
 	public void outputArticulations(ArrayList<Integer> a) {
-		if(a.size()>0) {
+		if (a.size() > 0) {
 			System.out.print("Artikulationen: ");
-			for(Integer i : a) {
-				System.out.print(toAlphabetic(i)+" ");
+			for (Integer i : a) {
+				System.out.print(toAlphabetic(i) + " ");
 			}
 		}
+	}
+
+	public void calcBridges(Matrix m, int k) {
+		final int components = k;
+		int newComponents = 0;
+		int size = m.getSize();
+		Integer[][] aMatrix = m.getMatrix();
+		Integer[][] tempAMatrix = copyMatrix(aMatrix, size);
+		Integer[][] tempWMatrix = copyMatrix(aMatrix, size);
+		int counter=0;
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (aMatrix[i][j] == 1) {
+					tempAMatrix[i][j] = 0;
+					tempWMatrix = calcWegematrix(tempAMatrix);
+					newComponents = calcComponents(tempWMatrix);
+					if (newComponents > components) {
+						if(counter==0)
+							System.out.print("\nBrücken:");
+						counter++;
+						System.out.print("[" + toAlphabetic(i) + "," + toAlphabetic(j)+"]");
+					}
+					tempAMatrix = copyMatrix(aMatrix, size);
+				}
+			}
+		}
+
 	}
 
 	// Adjazentmatrix Knoten oder Kante entfernen um Artikulationen oder Brücken zu

@@ -24,6 +24,7 @@ public class Testclass {
 		System.out.println("Anzahl an Komponenten: " + components);
 
 		c1.calcArticulations(m1_klon, components);
+		c1.calcBridges(m1_klon, components);
 
 	}
 

@@ -9,7 +9,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
 public class Matrix {
-	private final String CSV_FILE_PATH = "/Users/paulherbich/Desktop/Schule/POS/Graphentheorie-Programm/matrix.csv";
+	private final String CSV_FILE_PATH = "/Users/paulherbich/Desktop/Schule/POS/Graphentheorie-Programm/matrix_zusammen.csv";
 	private ArrayList<String> MatrixBlock = new ArrayList<String>();
 	private String[][] StringMatrix;
 	private int matrixSize;
